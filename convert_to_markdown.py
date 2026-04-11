@@ -80,7 +80,7 @@ def parse_story_html(html, url):
     story_markdown = md(content_html, heading_style="ATX")
 
     # Post-process
-    story_markdown = re.sub(r'(\n|^)_+(\s*)\*\*Author\'s Note:\*\*', r'\1_**Author\'s Note:**', story_markdown)
+    story_markdown = re.sub(r'(\n|^)[\*_]*(\s*)\*\*Author\'s Note:?\*\*\s*', r'\1_**Author\'s Note:** _', story_markdown)
     story_markdown = re.sub(r'\*\*\*([^*]+)\*\*(.+?)\*', r'_**\1**\2_', story_markdown, flags=re.DOTALL)
     story_markdown = re.sub(r'[ \t]+$', '', story_markdown, flags=re.MULTILINE)
 
@@ -129,8 +129,19 @@ def convert_all_stories():
             with open(filepath, "rb") as f:
                 raw_html = f.read()
 
-            # Remove null bytes and handle common site encoding quirks
-            html_text = raw_html.decode('utf-8', errors='replace').replace('\x00', '')
+            # Detect encoding and handle null bytes
+            from bs4 import UnicodeDammit
+            dammit = UnicodeDammit(raw_html, is_html=True)
+            encoding = dammit.original_encoding
+
+            # Map iso-8859-1 to cp1252 to better handle smart quotes/apostrophes in the \x80-\x9F range
+            if encoding and encoding.lower() in ['iso-8859-1', 'latin-1']:
+                 encoding = 'cp1252'
+
+            try:
+                html_text = raw_html.decode(encoding or 'utf-8', errors='replace').replace('\x00', '')
+            except (UnicodeDecodeError, LookupError):
+                html_text = raw_html.decode('utf-8', errors='replace').replace('\x00', '')
 
             url = url_map.get(recid, f"https://utopiastories.com/story/{recid}.html")
             metadata, content = parse_story_html(html_text, url)

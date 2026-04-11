@@ -1,73 +1,95 @@
-# UtopiaStories Archive Parser
+# 🌌 UtopiaStories Archive Parser
 
-A clean, searchable archive of stories parsed from UtopiaStories. This project exists to preserve a collection of stories after the original website temporarily went down in 2022.
+[![Build and Release Archive](https://github.com/victoria-shayner/utopiastories-parser/actions/workflows/release.yml/badge.svg)](https://github.com/victoria-shayner/utopiastories-parser/actions/workflows/release.yml)
 
-## Purpose
+> A high-performance parser and modern web archive for preserving adult stories from UtopiaStories.
 
-The original website [UtopiaStories](https://utopiastories.com) temporarily went down in 2022. During that time, the maintainer lost access to their favorite stories used for bedtime reading. This project was created to keep a copy of those stories, ensuring they remain accessible for personal reading and preservation.
+## 📜 Purpose
 
-All credits and original rights belong to the author of UtopiaStories (webmaster@utopiastories.com). This project is an archival effort to preserve content that is important to its readers.
+In 2022, the original website **[UtopiaStories](https://utopiastories.com)** temporarily went offline. This project was born from a desire to preserve a curated collection of bedtime stories that were nearly lost. 
 
-**Adult Content Warning:** This site contains adult/explicit content intended for mature audiences.
+This repository contains the tools to scrape, clean, and re-host these stories in a modern, searchable, and responsive archive. All credits and original rights belong to the webmaster of UtopiaStories (webmaster@utopiastories.com).
 
-## Project Structure
+> 🔞 **Adult Content Warning:** This site contains adult/explicit content intended for mature audiences only.
 
-- `stories/`: Contains the raw parsed stories in Markdown format (committed to the repository).
-- `website/`: A Hugo-based website that displays the stories in a clean, searchable format.
-- `parse_stories.py`: Script to fetch and parse stories from the original website.
-- `convert_stories.py`: Script to convert raw stories into the Hugo-compatible format for the website.
-- `extract_urls.py`: Script to extract story URLs from the main site.
-- `Makefile`: Automates the parsing, conversion, and building process.
+## ✨ Features
 
-## How to Deploy Your Own Copy
+- ⚡ **High-Speed Parsing:** Efficient Python-based scraper with failure tracking and polite request delays.
+- 🔍 **Fast Search:** Integrated search functionality with debounced input and minimum character requirements for performance.
+- 📱 **Responsive Design:** Based on the clean and minimalist `PaperMod` Hugo theme.
+- 🎨 **Smart Markdown Correction:** Automatic detection and fixing of common formatting issues (broken italics, malformed author's notes).
+- 🏷️ **Rich Metadata:** Stories include author tags, original publication dates, and links to the original source.
+- 🚀 **One-Click Deployment:** GitHub Actions workflow automatically builds the site and creates a deployable archive on every push.
 
-### Prerequisites
+## 📂 Project Structure
 
-- Python 3.x
-- [Hugo](https://gohugo.io/) (extended version recommended)
-- `pip` (Python package manager)
+- `stories/` - Raw Markdown files parsed from the original site (committed).
+- `website/` - The Hugo-based web frontend.
+- `parse_stories.py` - The main scraping engine with 404 tracking.
+- `convert_stories.py` - Bridge script to move raw data into the web directory.
+- `detect_broken_markdown.py` - Quality control utility for fixing formatting.
+- `Makefile` - The automation hub for all common tasks.
 
-### Installation
+## 🛠️ Quick Start
 
-1. Clone the repository and initialize submodules (for the website theme):
-   ```bash
-   git clone <repository-url>
-   cd utopiastories-parser
-   git submodule update --init --recursive
-   ```
+### 1. Prerequisites
+- **Python 3.x** & `pip`
+- **[Hugo Extended](https://gohugo.io/installation/)** (v0.120+ recommended)
+- **Make** (optional, but highly recommended)
 
-2. Set up the environment and install dependencies:
-   ```bash
-   make venv
-   ```
+### 2. Installation
+```bash
+# Clone the repository and its theme submodule
+git clone https://github.com/victoria-shayner/utopiastories-parser.git
+cd utopiastories-parser
+git submodule update --init --recursive
 
-### Parsing and Building
+# Set up the Python virtual environment
+make venv
+```
 
-1. **Parse Stories:** To fetch new stories from the original site (if available):
-   ```bash
-   make parse
-   ```
-   Note: This uses `parse_stories.py` and respects a delay between requests to be polite to the server.
+## ⚙️ Usage Workflow
 
-2. **Convert for Website:** Convert the raw `stories/*.md` files into `website/content/stories/*.md`:
-   ```bash
-   make convert
-   ```
+The project is designed to be managed via `make` commands:
 
-3. **Build the Website:** Generate the static site files and a deployable archive:
-   ```bash
-   make build
-   ```
-   This will create a `website-archive.tar.gz` file in the project root.
+### Step 1: Parsing
+Fetch new stories that aren't already in your `stories/` folder:
+```bash
+make parse
+```
+*Failed URLs (404s) are tracked in `failed_urls.json` to avoid redundant requests.*
 
-4. **Local Preview:** You can run a local Hugo server to preview the site:
-   ```bash
-   cd website
-   hugo server
-   ```
+### Step 2: Quality Control
+Before publishing, check if any stories have rendering issues:
+```bash
+# Detect broken formatting
+python3 detect_broken_markdown.py
 
-5. **Deploy:** Extract the contents of `website-archive.tar.gz` to your web server's root directory.
+# Delete identified broken files (optional, allows re-parsing)
+python3 detect_broken_markdown.py --delete
+```
 
-## License and Copyright
+### Step 3: Conversion & Build
+Prepare the data for Hugo and generate the static site:
+```bash
+# Sync stories to the website directory
+make convert
 
-Stories are copyrighted by the respective authors. Duplication of any kind is prohibited without consent. The code in this repository is provided for archival and educational purposes.
+# Build the site and create a .tar.gz archive
+make build
+```
+
+### Step 4: Local Preview
+```bash
+cd website
+hugo server
+```
+
+## 🚢 Deployment
+
+1. **GitHub Actions:** Every push to `master` automatically creates a new GitHub Release with a `website-archive.tar.gz` asset.
+2. **Manual:** Run `make build` and upload the contents of the generated `website-archive.tar.gz` to your web server's root.
+
+## ⚖️ License & Copyright
+
+**Stories are copyrighted by their respective authors.** Duplication of any kind is prohibited without express consent from the original creators. This software is provided for archival and educational purposes.

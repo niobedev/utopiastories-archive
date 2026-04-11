@@ -129,6 +129,8 @@ def parse_story_page(html):
         content = match.group(1)
         # Remove trailing spaces on each line
         content = re.sub(r'[ \t]+$', '', content, flags=re.MULTILINE)
+        # Fix spaces after opening or before closing underscores
+        content = content.strip()
         # If it contains multiple newlines (blank lines), italics often break in Goldmark.
         # We can try to keep it as italics by making sure each paragraph is italicized if needed,
         # but here the most straightforward fix for Goldmark is avoiding blank lines inside _..._

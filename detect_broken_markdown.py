@@ -15,16 +15,15 @@ def is_broken(content):
     if re.search(r'_[^_\n]+? \s*_', content):
         return True, "Italics with trailing spaces before closing underscore"
 
-    # Pattern 5: Italics that start with a space
-    if re.search(r'_\s+[^_\n]+?_', content):
-        return True, "Italics with leading spaces after opening underscore"
+    # Pattern 5: Italics that start or end with a space
+    # Example: _ Author's Note: Hello_ or _Author's Note: Hello _
+    if re.search(r'_\s+[^_\n]+?_', content) or re.search(r'_[^_\n]+?\s+_', content):
+        return True, "Italics with leading or trailing spaces"
 
     # Pattern 3: Triple underscores or triple asterisks that might be poorly converted
-    if '***' in content or '___' in content:
-        # Though *** is valid for bold-italic, sometimes it's a sign of a bad conversion
-        # if it was meant to be separate. But let's be careful.
-        # The specific issue reported was extra underscores around Author's Note.
-        pass
+    # Often a sign of nested formatting that went wrong or extra underscores
+    if '___' in content:
+        return True, "Triple underscores detected"
 
     # Pattern 4: The specific "Author's Note" issue where it's not correctly italicized
     # or has extra underscores.

@@ -1,0 +1,15 @@
+# Project Artifacts
+.venv/
+__pycache__/
+*.pyc
+failed_urls.json
+
+# Hugo Build Artifacts
+website/public/
+website/resources/
+website/hugo_stats.json
+
+# Generated Website Stories
+# We want to keep the raw parsed stories in the root `stories/` directory,
+# but the converted stories in `website/content/stories/` should be generated on build.
+website/content/stories/

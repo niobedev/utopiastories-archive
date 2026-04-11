@@ -23,10 +23,10 @@ This repository contains the tools to scrape, clean, and re-host these stories i
 
 ## 📂 Project Structure
 
-- `stories/` - Raw Markdown files parsed from the original site (committed).
+- `stories/` - Raw HTML files from the original site (committed).
 - `website/` - The Hugo-based web frontend.
-- `parse_stories.py` - The main scraping engine with 404 tracking.
-- `convert_stories.py` - Bridge script to move raw data into the web directory.
+- `download_stories.py` - The main scraping engine with 404 tracking.
+- `convert_to_markdown.py` - Bridge script to move raw data into the web directory.
 - `detect_broken_markdown.py` - Quality control utility for fixing formatting.
 - `Makefile` - The automation hub for all common tasks.
 
@@ -52,10 +52,10 @@ make venv
 
 The project is designed to be managed via `make` commands:
 
-### Step 1: Parsing
+### Step 1: Downloading
 Fetch new stories that aren't already in your `stories/` folder:
 ```bash
-make parse
+make download
 ```
 *Failed URLs (404s) are tracked in `failed_urls.json` to avoid redundant requests.*
 
@@ -75,7 +75,7 @@ Prepare the data for Hugo and generate the static site:
 # Sync stories to the website directory
 make convert
 
-# Build the site and create a .tar.gz archive
+# Build the site and create a website-archive.tar.gz archive
 make build
 ```
 
@@ -87,7 +87,7 @@ hugo server
 
 ## 🚢 Deployment
 
-1. **GitHub Actions:** Every push to `master` automatically creates a new GitHub Release with a `website-archive.tar.gz` asset.
+1. **GitHub Actions:** Every push to `main` automatically creates a new GitHub Release with a `website-archive.tar.gz` asset.
 2. **Manual:** Run `make build` and upload the contents of the generated `website-archive.tar.gz` to your web server's root.
 
 ## ⚖️ License & Copyright

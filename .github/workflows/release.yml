@@ -28,7 +28,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Convert stories
-        run: python convert_stories.py
+        run: python convert_to_markdown.py
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3

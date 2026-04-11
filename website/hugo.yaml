@@ -12,10 +12,11 @@ params:
   defaultTheme: light
   showCodeCopyButtons: true
   ShowReadingTime: false
-  ShowShareButtons: false
+  ShowShareButtons: true
   ShowPostNavLinks: true
   ShowBreadCrumbs: true
-  author: Victoria Toral
+  author: Utopia Stories Library
+  description: "A clean, searchable archive of mature stories parsed from UtopiaStories. Explore our collection of adult, explicit, and sensitive material."
   contactEmail: victoria@housetoral.uk
   homeInfoParams:
     Title: "Welcome to Utopia Stories Library"
@@ -46,6 +47,13 @@ outputs:
 taxonomies:
   tag: tags
   author: authors
+
+enableRobotsTXT: true
+
+sitemap:
+  changefreq: weekly
+  priority: 0.5
+  filename: sitemap.xml
 
 menu:
   main:

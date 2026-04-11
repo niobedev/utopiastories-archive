@@ -31,18 +31,23 @@ def is_broken(content):
     if re.search(r'_\s+\*\*Author\'s Note:\*\*', content) or re.search(r'\*\*Author\'s Note:\*\*\s+_', content):
          return True, "Broken Author's Note formatting"
 
+    # Pattern 6: Missing trailing newline
+    if content and not content.endswith('\n'):
+        return True, "Missing trailing newline"
+
     return False, ""
 
 def main():
     parser = argparse.ArgumentParser(description="Detect and delete stories with broken markdown.")
     parser.add_argument("--delete", action="store_true", help="Delete the broken stories after detection.")
+    parser.add_argument("--force", action="store_true", help="Force deletion without confirmation.")
     args = parser.parse_args()
 
-    stories_dir = "stories"
-    website_stories_dir = "website/content/stories"
+    # Scan website/content/stories/ for converted stories
+    stories_dir = "website/content/stories"
 
     if not os.path.exists(stories_dir):
-        print(f"Directory {stories_dir} not found.")
+        print(f"Directory {stories_dir} not found. Run 'make convert' first.")
         return
 
     broken_files = []
@@ -68,20 +73,19 @@ def main():
         print(f" - {filename}: {reason}")
 
     if args.delete:
-        confirm = input(f"\nAre you sure you want to delete these {len(broken_files)} files? (y/N): ")
+        if args.force:
+            confirm = 'y'
+        else:
+            confirm = input(f"\nAre you sure you want to delete these {len(broken_files)} files? (y/N): ")
+
         if confirm.lower() == 'y':
             for filename, _ in broken_files:
-                # Delete from stories/
-                p1 = os.path.join(stories_dir, filename)
-                if os.path.exists(p1):
-                    os.remove(p1)
-
                 # Delete from website/content/stories/
-                p2 = os.path.join(website_stories_dir, filename)
-                if os.path.exists(p2):
-                    os.remove(p2)
+                p = os.path.join(stories_dir, filename)
+                if os.path.exists(p):
+                    os.remove(p)
 
-            print(f"\nDeleted {len(broken_files)} files. Now you can run parse_stories.py and then convert_stories.py.")
+            print(f"\nDeleted {len(broken_files)} files. Now you can run 'make convert' to re-convert them.")
         else:
             print("\nDeletion cancelled.")
     else:

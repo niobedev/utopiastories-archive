@@ -123,6 +123,23 @@ def parse_story_page(html):
     story_markdown = re.sub(r'(\n|^)_+(\s*)\*\*Author\'s Note:\*\*', r'\1_**Author\'s Note:**', story_markdown)
     story_markdown = re.sub(r'\*\*\*([^*]+)\*\*(.+?)\*', r'_**\1**\2_', story_markdown, flags=re.DOTALL)
 
+    # NEW: Fix broken italics that span multiple paragraphs or have extra spaces
+    # and remove trailing spaces on each line inside the italics to make it cleaner
+    def fix_italics(match):
+        content = match.group(1)
+        # Remove trailing spaces on each line
+        content = re.sub(r'[ \t]+$', '', content, flags=re.MULTILINE)
+        # If it contains multiple newlines (blank lines), italics often break in Goldmark.
+        # We can try to keep it as italics by making sure each paragraph is italicized if needed,
+        # but here the most straightforward fix for Goldmark is avoiding blank lines inside _..._
+        # Or, just let it be. But if we have blank lines, let's wrap each paragraph.
+        if '\n\n' in content:
+            paragraphs = content.split('\n\n')
+            return '\n\n'.join([f'_{p.strip()}_' for p in paragraphs if p.strip()])
+        return f'_{content}_'
+
+    story_markdown = re.sub(r'_(.+?)_', fix_italics, story_markdown, flags=re.DOTALL)
+
     # Post-process markdown to remove empty table rows and excessive whitespace
     story_markdown = re.sub(r'\|[\s\|-]*\n', '', story_markdown)
     story_markdown = re.sub(r'\n{3,}', '\n\n', story_markdown)

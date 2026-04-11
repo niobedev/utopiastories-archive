@@ -1,0 +1,75 @@
+baseURL: "/"
+languageCode: en-us
+title: Utopia Stories Library
+theme: PaperMod
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+
+params:
+  defaultTheme: light
+  showCodeCopyButtons: true
+  ShowReadingTime: false
+  ShowShareButtons: false
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  author: Victoria Toral
+  contactEmail: victoria@housetoral.uk
+  homeInfoParams:
+    Title: "Welcome to Utopia Stories Library"
+    Content: |
+      A clean, searchable archive of stories parsed from <a href="https://utopiastories.com/">UtopiaStories</a>.
+
+      <div style="background-color: #fff3f3; border: 1px solid #ff0000; padding: 15px; border-radius: 5px; margin-top: 20px;">
+        <strong>⚠️ CONTENT WARNING: 18+ MATURE AUDIENCES ONLY</strong><br>
+        This archive contains adult, explicit, and sensitive material. It is intended for mature audiences only. By continuing to browse this site, you acknowledge that you are of legal age to view such content.
+      </div>
+
+  # Fuse.js Search
+  fuseOpts:
+    isCaseSensitive: false
+    shouldSort: true
+    location: 0
+    distance: 100
+    threshold: 0.4
+    minMatchCharLength: 3
+    keys: ["title", "permalink", "summary", "content", "author", "tags"]
+
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON # For search
+
+taxonomies:
+  tag: tags
+  author: authors
+
+menu:
+  main:
+    - identifier: stories
+      name: Stories
+      url: /stories/
+      weight: 10
+    - identifier: tags
+      name: Tags
+      url: /tags/
+      weight: 20
+    - identifier: authors
+      name: Authors
+      url: /authors/
+      weight: 30
+    - identifier: purpose
+      name: Purpose
+      url: /purpose/
+      weight: 35
+    - identifier: search
+      name: Search
+      url: /search/
+      weight: 38
+    - identifier: contact
+      name: Contact
+      url: "mailto:victoria@housetoral.uk"
+      weight: 40

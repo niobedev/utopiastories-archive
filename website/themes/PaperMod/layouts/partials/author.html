@@ -1,0 +1,26 @@
+{{- if or .Params.authors .Params.author site.Params.author }}
+  {{- $authors := (.Params.authors | default .Params.author | default site.Params.author) }}
+  {{- if reflect.IsSlice $authors }}
+    {{- range $i, $name := $authors }}
+      {{- if $i }}, {{ end }}
+      {{- $found := false }}
+      {{- range ($.GetTerms "authors") }}
+        {{- if eq .LinkTitle $name }}
+          <a href="{{ .Permalink }}">{{ .LinkTitle }}</a>
+          {{- $found = true }}
+        {{- end }}
+      {{- end }}
+      {{- if not $found }}{{ $name }}{{ end }}
+    {{- end }}
+  {{- else }}
+    {{- $name := $authors }}
+    {{- $found := false }}
+    {{- range ($.GetTerms "authors") }}
+      {{- if eq .LinkTitle $name }}
+        <a href="{{ .Permalink }}">{{ .LinkTitle }}</a>
+        {{- $found = true }}
+      {{- end }}
+    {{- end }}
+    {{- if not $found }}{{ $name }}{{ end }}
+  {{- end }}
+{{- end -}}

@@ -2,7 +2,6 @@
 .venv/
 __pycache__/
 *.pyc
-failed_urls.json
 
 # Hugo Build Artifacts
 website/public/

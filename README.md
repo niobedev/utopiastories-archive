@@ -54,17 +54,19 @@ All credits and original rights belong to the author of UtopiaStories (webmaster
    make convert
    ```
 
-3. **Build the Website:** Generate the static site files:
+3. **Build the Website:** Generate the static site files and a deployable archive:
    ```bash
    make build
    ```
-   The output will be in `website/public/`.
+   This will create a `website-archive.tar.gz` file in the project root.
 
 4. **Local Preview:** You can run a local Hugo server to preview the site:
    ```bash
    cd website
    hugo server
    ```
+
+5. **Deploy:** Extract the contents of `website-archive.tar.gz` to your web server's root directory.
 
 ## License and Copyright
 

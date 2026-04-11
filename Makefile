@@ -29,10 +29,12 @@ convert: venv
 	@echo "Converting stories to website format..."
 	$(VENV_PYTHON) convert_stories.py
 
-# Build the website using Hugo
+# Build the website using Hugo and create a deployable archive
 build:
 	@echo "Building website..."
 	cd website && $(HUGO)
+	@echo "Creating archive..."
+	tar -czf website-archive.tar.gz -C website/public .
 
 # Clean up generated files (but keep the raw parsed stories)
 clean:
@@ -40,6 +42,7 @@ clean:
 	rm -rf $(VENV)
 	rm -rf website/public
 	rm -rf website/resources
+	rm -f website-archive.tar.gz
 	# Not removing website/content/stories as they are needed for build,
 	# but they can be regenerated with 'make convert'
 	# rm -rf website/content/stories/*.md

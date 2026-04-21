@@ -22,6 +22,6 @@ jobs:
 
       - name: Push to GitLab
         run: |
-          git remote add gitlab git@gitlab.com/niobedev-group/utopiastories-archive.git
+          git remote add gitlab git@gitlab.com:niobedev-group/utopiastories-archive.git
           git push gitlab --all --force
           git push gitlab --tags --force

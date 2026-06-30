@@ -1,7 +1,11 @@
-baseURL: "/"
+baseURL: "https://utopiastories.housetoral.uk/"
 languageCode: en-us
 title: Utopia Stories Library
 theme: PaperMod
+
+services:
+  rss:
+    limit: 50
 
 markup:
   goldmark:
@@ -12,10 +16,12 @@ params:
   defaultTheme: light
   showCodeCopyButtons: true
   ShowReadingTime: false
-  ShowShareButtons: true
+  ShowShareButtons: false
   ShowPostNavLinks: true
   ShowBreadCrumbs: true
   author: Utopia Stories Library
+  mainSections:
+    - stories
   description: "A clean, searchable archive of mature stories parsed from UtopiaStories. Explore our collection of adult, explicit, and sensitive material."
   contactEmail: victoria@housetoral.uk
   homeInfoParams:
@@ -28,25 +34,43 @@ params:
         This archive contains adult, explicit, and sensitive material. It is intended for mature audiences only. By continuing to browse this site, you acknowledge that you are of legal age to view such content.
       </div>
 
-  # Fuse.js Search
   fuseOpts:
     isCaseSensitive: false
     shouldSort: true
     location: 0
     distance: 100
     threshold: 0.4
-    minMatchCharLength: 3
-    keys: ["title", "permalink", "summary", "content", "author", "tags"]
+    minMatchCharLength: 4
+    limit: 50
+    keys: ["title", "summary", "authors", "tags"]
 
 outputs:
   home:
     - HTML
     - RSS
-    - JSON # For search
+    - JSON
 
 taxonomies:
   tag: tags
   author: authors
+
+sectionPagesMenu: main
+
+pagination:
+  pagerSize: 20
+  path: page
+
+frontmatter:
+  date:
+    - date
+    - publishDate
+    - lastmod
+  lastmod:
+    - :git
+    - lastmod
+    - date
+    - publishDate
+    - :fileModTime
 
 enableRobotsTXT: true
 
@@ -63,21 +87,21 @@ menu:
       weight: 10
     - identifier: tags
       name: Tags
-      url: /tags/
+      url: /tags
       weight: 20
     - identifier: authors
       name: Authors
-      url: /authors/
+      url: /authors
       weight: 30
     - identifier: purpose
       name: Purpose
-      url: /purpose/
+      url: /purpose
       weight: 35
     - identifier: search
       name: Search
-      url: /search/
+      url: /search
       weight: 38
-    - identifier: contact
-      name: Contact
-      url: "mailto:victoria@housetoral.uk"
+    - identifier: original
+      name: Original Site
+      url: "https://utopiastories.com/"
       weight: 40

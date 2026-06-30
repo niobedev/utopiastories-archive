@@ -22,12 +22,6 @@
     {{- if not (.Param "hideMeta") }}
     <div class="post-meta">
       {{- partial "post_meta.html" . -}}
-      {{- partial "translation_list.html" . -}}
-      {{- partial "edit_post.html" . -}}
-      {{- partial "post_canonical.html" . -}}
-      {{- if .Params.original_url }}
-      <span class="original-link"> · <a href="{{ .Params.original_url }}" target="_blank" rel="noopener noreferrer">Original Story</a></span>
-      {{- end }}
     </div>
     {{- end }}
   </header>

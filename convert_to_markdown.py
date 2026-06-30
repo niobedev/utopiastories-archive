@@ -1,6 +1,7 @@
 import os
 import re
 import yaml
+from datetime import date
 from bs4 import BeautifulSoup
 from markdownify import markdownify as md
 import glob
@@ -43,6 +44,15 @@ def parse_story_html(html, url):
         if parent.name in ['b', 'strong']:
              parent = parent.parent
         metadata['post_date'] = parent.get_text(strip=True).split('-', 1)[-1].strip()
+        # Derive an ISO date (YYYY-MM-DD) that Hugo can parse and sort on,
+        # from the source M/D/YYYY post date.
+        m = re.match(r'^\s*(\d{1,2})/(\d{1,2})/(\d{4})\s*$', metadata['post_date'])
+        if m:
+            month, day, year = (int(g) for g in m.groups())
+            try:
+                metadata['date'] = date(year, month, day)
+            except ValueError:
+                pass
 
     # Title
     title = soup.title.string.split('::')[0].strip() if soup.title else "Untitled"

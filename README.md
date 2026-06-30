@@ -1,95 +1,104 @@
-# 🌌 UtopiaStories Archive Parser
+# 🌌 UtopiaStories Archive
 
-[![Build and Release Archive](https://github.com/victoria-shayner/utopiastories-parser/actions/workflows/release.yml/badge.svg)](https://github.com/victoria-shayner/utopiastories-parser/actions/workflows/release.yml)
+[![Build and Publish](https://github.com/niobedev/utopiastories-archive/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/niobedev/utopiastories-archive/actions/workflows/build-and-publish.yml)
+![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)
 
-> A high-performance parser and modern web archive for preserving adult stories from UtopiaStories.
+A serverless web archive of stories preserved from [UtopiaStories](https://utopiastories.com/).
+
+**Live Website:** https://utopiastories.housetoral.uk
+
+> 🔞 This site contains adult content intended for mature audiences only.
 
 ## 📜 Purpose
 
-In 2022, the original website **[UtopiaStories](https://utopiastories.com)** temporarily went offline. This project was born from a desire to preserve a curated collection of bedtime stories that were nearly lost. 
+In 2022 the original **[UtopiaStories](https://utopiastories.com)** website temporarily went offline. This project was born from a desire to preserve a curated collection of stories that were nearly lost.
 
-This repository contains the tools to scrape, clean, and re-host these stories in a modern, searchable, and responsive archive. All credits and original rights belong to the webmaster of UtopiaStories (webmaster@utopiastories.com).
+This repository contains the tools that scraped, cleaned, and re-host these stories in a modern, searchable, responsive archive. All credits and original rights belong to the webmaster of UtopiaStories (webmaster@utopiastories.com).
 
-> 🔞 **Adult Content Warning:** This site contains adult/explicit content intended for mature audiences only.
+> **This is a frozen archive.** The original site is no longer updated, so there is no automatic sync — the content set is fixed. The site is rebuilt and redeployed only when the templates or configuration change.
 
 ## ✨ Features
 
-- ⚡ **High-Speed Parsing:** Efficient Python-based scraper with failure tracking and polite request delays.
-- 🔍 **Fast Search:** Integrated search functionality with debounced input and minimum character requirements for performance.
-- 📱 **Responsive Design:** Based on the clean and minimalist `PaperMod` Hugo theme.
-- 🎨 **Smart Markdown Correction:** Automatic detection and fixing of common formatting issues (broken italics, malformed author's notes).
-- 🏷️ **Rich Metadata:** Stories include author tags, original publication dates, and links to the original source.
-- 🚀 **One-Click Deployment:** GitHub Actions workflow automatically builds the site and creates a deployable archive on every push.
+- 🔍 **Fast Search** — Client-side Fuse.js search across all story titles, authors, and tags.
+- 📱 **Responsive** — Clean, mobile-friendly design based on the `PaperMod` Hugo theme.
+- 🏷️ **Rich Metadata** — Browse by tags or authors; each story links back to its original source.
+- 🚀 **Serverless** — Builds and deploys entirely on GitHub's infrastructure (GitHub Pages).
+- 📦 **Versioned Releases** — Every build publishes a downloadable archive.
 
 ## 📂 Project Structure
 
-- `stories/` - Raw HTML files from the original site (committed).
-- `website/` - The Hugo-based web frontend.
-- `download_stories.py` - The main scraping engine with 404 tracking.
-- `convert_to_markdown.py` - Bridge script to move raw data into the web directory.
-- `detect_broken_markdown.py` - Quality control utility for fixing formatting.
-- `Makefile` - The automation hub for all common tasks.
+```
+stories/                # Raw HTML from utopiastories.com (committed)
+website/                # Hugo static site
+  content/stories/      # Markdown stories
+  layouts/              # Custom templates
+  assets/               # Custom CSS/JS (search, tag styling)
+  static/CNAME          # Custom domain for GitHub Pages
+download_stories.py     # Scraping engine with 404 tracking
+convert_to_markdown.py  # Bridge: raw HTML → Hugo markdown
+detect_broken_markdown.py # Quality-control utility
+extract_urls.py         # URL discovery (manual operation)
+story_urls.json         # Story URL database
+failed_urls.json        # Tracks 404s to avoid redundant requests
+Makefile                # Automation hub for common tasks
+.github/workflows/
+  build-and-publish.yml # Runs on push to main: build → deploy to Pages → release
+```
 
-## 🛠️ Quick Start
+## 🛠️ Development
 
-### 1. Prerequisites
+### Prerequisites
 - **Python 3.x** & `pip`
-- **[Hugo Extended](https://gohugo.io/installation/)** (v0.120+ recommended)
-- **Make** (optional, but highly recommended)
+- **[Hugo Extended](https://gohugo.io/installation/)** 0.146+
+- **Make** (optional, recommended)
 
-### 2. Installation
+### Setup
 ```bash
-# Clone the repository and its theme submodule
-git clone https://github.com/victoria-shayner/utopiastories-parser.git
-cd utopiastories-parser
-git submodule update --init --recursive
+# Clone with the theme submodule
+git clone --recurse-submodules https://github.com/niobedev/utopiastories-archive.git
+cd utopiastories-archive
 
 # Set up the Python virtual environment
 make venv
 ```
 
-## ⚙️ Usage Workflow
-
-The project is designed to be managed via `make` commands:
-
-### Step 1: Downloading
-Fetch new stories that aren't already in your `stories/` folder:
+### Common tasks
 ```bash
+# Download any stories not already in stories/ (404s tracked in failed_urls.json)
 make download
-```
-*Failed URLs (404s) are tracked in `failed_urls.json` to avoid redundant requests.*
 
-### Step 2: Quality Control
-Before publishing, check if any stories have rendering issues:
-```bash
-# Detect broken formatting
+# Quality control: detect (and optionally delete) broken markdown for re-parsing
 python3 detect_broken_markdown.py
-
-# Delete identified broken files (optional, allows re-parsing)
 python3 detect_broken_markdown.py --delete
-```
 
-### Step 3: Conversion & Build
-Prepare the data for Hugo and generate the static site:
-```bash
-# Sync stories to the website directory
+# Convert raw HTML into the website content directory
 make convert
 
-# Build the site and create a website-archive.tar.gz archive
+# Build the static site (also creates website-archive.tar.gz)
 make build
-```
 
-### Step 4: Local Preview
-```bash
-cd website
-hugo server
+# Local preview
+cd website && hugo server
 ```
 
 ## 🚢 Deployment
 
-1. **GitHub Actions:** Every push to `main` automatically creates a new GitHub Release with a `website-archive.tar.gz` asset.
-2. **Manual:** Run `make build` and upload the contents of the generated `website-archive.tar.gz` to your web server's root.
+### GitHub Pages (default)
+The site deploys automatically to https://utopiastories.housetoral.uk on every push to `main`
+via [`build-and-publish.yml`](.github/workflows/build-and-publish.yml): Hugo builds the site,
+deploys it to GitHub Pages, and publishes a release archive. No server required.
+
+### Manual / VPS
+Download `website-archive.tar.gz` from the latest release and extract it to your web root:
+```bash
+wget <release-asset-url> -O website-archive.tar.gz
+tar -xzf website-archive.tar.gz
+cp -r public/* /var/www/utopia/
+```
 
 ## ⚖️ License & Copyright
 
-**Stories are copyrighted by their respective authors.** Duplication of any kind is prohibited without express consent from the original creators. This software is provided for archival and educational purposes.
+This project (the parser and tooling) is licensed under the [BSD-3-Clause License](LICENSE).
+
+**Stories are copyrighted by their respective authors.** This software is provided for archival
+purposes only. All rights belong to the original authors and UtopiaStories.
